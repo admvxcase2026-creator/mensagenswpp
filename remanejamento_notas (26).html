@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Remanejamento · VX Case</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%94%84%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --bg:#0a0b0d;
+    --bg-grad:radial-gradient(circle at 20% -10%, #0f1c30 0%, #0a0b0d 45%);
+    --panel:#131518;
+    --panel2:#191b1f;
+    --border:#262930;
+    --text:#eef0f4;
+    --muted:#8d8f99;
+    --accent:#4f8cff;
+    --accent2:#38e2a8;
+    --accent-grad:linear-gradient(135deg,#4f8cff 0%,#1f5ce0 100%);
+    --danger:#ff6b6f;
+    --gold:#4f8cff;
+    --shadow:0 8px 30px rgba(0,0,0,.4);
+  }
+  body.light{
+    --bg:#f4f6fa;
+    --bg-grad:radial-gradient(circle at 20% -10%, #e3ecff 0%, #f4f6fa 45%);
+    --panel:#ffffff;
+    --panel2:#f5f7fb;
+    --border:#e1e5ee;
+    --text:#191b1f;
+    --muted:#6c6e78;
+    --accent:#2b5ce0;
+    --accent2:#12a978;
+    --accent-grad:linear-gradient(135deg,#2b5ce0 0%,#123f9e 100%);
+    --danger:#e0393f;
+    --gold:#2b5ce0;
+    --shadow:0 8px 24px rgba(20,20,40,.08);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg-grad), var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    padding:24px;
+    min-height:100vh;
+    transition:background .25s, color .25s;
+  }
+  h1,h2,h3,.brand,.gen-btn,.login-name{font-family:'Sora',sans-serif;}
+  .wrap{max-width:1650px;margin:0 auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+  .brand{font-size:20px;font-weight:700;letter-spacing:.02em;background:var(--accent-grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .sub{color:var(--muted);font-size:13px;margin-top:2px;}
+  .topbar-right{display:flex;gap:10px;align-items:center;}
+  .user-chip{
+    display:flex;align-items:center;gap:8px;
+    background:var(--panel2);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:6px 14px 6px 8px;
+    font-size:13px;
+  }
+  .user-avatar{
+    width:24px;height:24px;border-radius:50%;
+    background:var(--accent-grad);
+    display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:700;color:#fff;
+  }
+  .icon-btn{
+    background:var(--panel2);
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    cursor:pointer;
+  }
+  .icon-btn:hover{border-color:var(--accent);}
+
+  .tab-bar{display:flex;gap:8px;margin-bottom:18px;max-width:760px;}
+  .tab-btn{
+    flex:1;
+    background:var(--panel);
+    border:1px solid var(--border);
+    color:var(--muted);
+    padding:12px;
+    border-radius:12px;
+    font-size:13.5px;
+    font-weight:700;
+    font-family:'Sora',sans-serif;
+    cursor:pointer;
+    box-shadow:var(--shadow);
+  }
+  .tab-btn.active{background:var(--accent-grad);color:#fff;border-color:transparent;}
+  @keyframes blinkTab{0%,100%{opacity:1;}50%{opacity:.35;}}
+  .blinking-tab{
+    background:var(--danger) !important;
+    color:#fff !important;
+    border-color:transparent !important;
+    animation:blinkTab 1s infinite;
+  }
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:18px;
+    box-shadow:var(--shadow);
+  }
+  .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;}
+  .card-head h2{font-size:13px;margin:0;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;}
+  .mini-btn{
+    background:var(--panel2);
+    border:1px solid var(--border);
+    color:var(--accent);
+    border-radius:7px;
+    padding:7px 12px;
+    font-size:12px;
+    cursor:pointer;
+    font-weight:600;
+  }
+  .mini-btn:hover{border-color:var(--accent);}
+  label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;font-weight:600;}
+  input, textarea, select{
+    width:100%;
+    background:var(--panel2);
+    border:1px solid var(--border);
+    border-radius:9px;
+    padding:10px 12px;
+    color:var(--text);
+    font-size:14px;
+    outline:none;
+    font-family:'Inter',sans-serif;
+  }
+  input:focus, textarea:focus, select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,155,255,.15);}
+
+  .origens-scroll{display:flex;flex-direction:column;gap:16px;}
+  .origem-block{
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:20px 22px;
+    background:var(--panel2);
+    width:100%;
+  }
+  .field-label{
+    font-size:10px;font-weight:700;color:var(--muted);
+    width:38px;flex-shrink:0;text-transform:uppercase;letter-spacing:.04em;
+  }
+  .o-de, .d-para{
+    width:280px;flex-shrink:0;
+    border:1px solid var(--accent) !important;
+    background:rgba(79,140,255,.14) !important;
+    color:var(--accent) !important;
+    font-weight:600;
+    padding:9px 11px !important;
+  }
+  body.light .o-de, body.light .d-para{background:rgba(43,92,224,.10) !important;}
+  .destino-block{
+    border-top:1px solid var(--border);
+    padding-top:14px;
+    margin-top:14px;
+  }
+
+  .item-row{
+    display:inline-flex;
+    align-items:flex-start;
+    gap:8px;
+    margin-bottom:8px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:6px 8px;
+    background:var(--panel);
+    max-width:100%;
+  }
+  .item-row .cod{width:70px;flex-shrink:0;text-align:center;}
+  .item-row .qtd{width:50px;flex-shrink:0;text-align:center;}
+  .item-row .desc{
+    width:400px;
+    flex-shrink:0;
+    resize:none;
+    overflow:hidden;
+    min-height:34px;
+    line-height:1.35;
+    text-transform:none;
+  }
+  .item-row input, .item-row textarea{padding:6px 8px;font-size:11.5px;}
+  .stats-sidebar{width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:8px;}
+  .stats-title{font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:1px;}
+  .stats-card{
+    border:1px solid var(--border);border-radius:10px;padding:9px 12px;
+    background:var(--panel2);display:flex;justify-content:space-between;align-items:center;
+    font-size:12px;
+  }
+  .stats-card .stats-val{font-size:15px;font-weight:800;font-family:'Sora',sans-serif;color:var(--accent);}
+  .item-row .pick-mini, .item-row .rm-btn{margin-top:1px;width:26px;height:26px;font-size:12px;}
+
+  .rm-btn, .pick-mini{
+    background:transparent;
+    border:1px solid var(--border);
+    border-radius:7px;
+    width:28px;height:28px;
+    cursor:pointer;
+    font-size:13px;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--accent);
+    flex-shrink:0;
+  }
+  .rm-btn{color:var(--danger);}
+  .rm-btn:hover{border-color:var(--danger);}
+  .pick-mini:hover{border-color:var(--accent);}
+  .rm-block-btn{
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--danger);
+    border-radius:7px;
+    width:38px;height:38px;
+    cursor:pointer;
+    font-size:16px;
+    flex-shrink:0;
+  }
+  .rm-block-btn:hover{border-color:var(--danger);}
+
+  .add-btn{
+    background:var(--panel2);
+    border:1.5px dashed var(--border);
+    color:var(--accent);
+    border-radius:10px;
+    padding:9px 12px;
+    cursor:pointer;
+    font-size:12.5px;
+    font-weight:600;
+    width:100%;
+    margin-top:2px;
+  }
+  .add-btn:hover{border-color:var(--accent);}
+  .add-origem-col{
+    width:100%;
+    border:1.5px dashed var(--border);
+    border-radius:14px;
+    background:transparent;
+    color:var(--accent);
+    font-weight:700;
+    font-size:13px;
+    cursor:pointer;
+    padding:16px;
+    text-align:center;
+  }
+  .add-origem-col:hover{border-color:var(--accent);}
+
+  .action-row{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+  .action-row button{flex:1;min-width:150px;}
+  .btn-primary, .gen-btn{
+    background:var(--accent-grad);
+    border:none;
+    color:#fff;
+    padding:13px;
+    border-radius:10px;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+    text-transform:none;
+    letter-spacing:.01em;
+  }
+  .btn-primary:hover, .gen-btn:hover{filter:brightness(1.08);}
+  .btn-secondary{
+    background:var(--panel2);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:13px;
+    border-radius:10px;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .btn-secondary:hover{border-color:var(--accent);}
+  .save-status{font-size:11.5px;color:var(--muted);text-align:center;margin-top:8px;min-height:14px;}
+  .out-wrap{position:relative;}
+  #output, .msg-output{
+    white-space:pre-wrap;
+    min-height:160px;
+    font-family:'Consolas',monospace;
+    font-size:13.5px;
+    line-height:1.6;
+    text-transform:none;
+  }
+  .copy-btn{
+    position:absolute;top:10px;right:10px;
+    background:var(--accent2);border:none;color:#04231a;
+    padding:7px 12px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;
+  }
+  .copy-btn.copied{background:var(--muted);color:#111;}
+  .card-tab-row{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+  .card-tab-btn{
+    background:var(--panel2);border:1px solid var(--border);color:var(--muted);
+    padding:6px 12px;border-radius:999px;font-size:11.5px;font-weight:600;cursor:pointer;
+    font-family:'Sora',sans-serif;
+  }
+  .card-tab-btn.active{background:var(--accent-grad);color:#fff;border-color:transparent;}
+  .back-btn{margin-bottom:14px;}
+
+  .login-overlay{
+    position:fixed;inset:0;
+    background:var(--bg-grad), var(--bg);
+    display:flex;align-items:center;justify-content:center;
+    z-index:100;flex-direction:column;padding:24px;
+  }
+  .login-box{max-width:420px;width:100%;text-align:center;}
+  .login-title{font-size:24px;font-weight:800;margin-bottom:6px;background:var(--accent-grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .login-sub{color:var(--muted);font-size:13px;margin-bottom:28px;}
+  .login-grid{display:flex;flex-direction:column;gap:10px;}
+  .login-name{
+    background:var(--panel);border:1px solid var(--border);color:var(--text);
+    padding:15px 18px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;
+    display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);
+    transition:transform .12s, border-color .12s;
+  }
+  .login-name:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .login-avatar{
+    width:34px;height:34px;border-radius:50%;background:var(--accent-grad);
+    display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;
+  }
+
+  .overlay{
+    display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);
+    align-items:center;justify-content:center;z-index:50;padding:20px;
+  }
+  .overlay.open{display:flex;}
+  .modal{
+    background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:22px;
+    width:92%;max-width:520px;max-height:82vh;overflow-y:auto;box-shadow:var(--shadow);
+  }
+  .modal h3{margin:0 0 16px;font-size:16px;font-family:'Sora',sans-serif;}
+  .modal-add-row{display:flex;gap:8px;margin-bottom:14px;}
+  .modal-add-row input{font-size:13px;padding:8px 10px;}
+  .modal-add-row button{
+    background:var(--accent-grad);border:none;color:#fff;
+    border-radius:9px;padding:0 14px;cursor:pointer;font-size:13px;font-weight:600;white-space:nowrap;
+  }
+  .list-item{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+    padding:10px 12px;border:1px solid var(--border);border-radius:9px;margin-bottom:6px;
+    font-size:13px;background:var(--panel2);
+  }
+  .list-item .info{flex:1;min-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .list-item select{width:auto;min-width:150px;font-size:12px;padding:6px 8px;text-transform:none;}
+  .list-item .actions{display:flex;gap:6px;}
+  .list-item button{
+    background:transparent;border:1px solid var(--border);
+    color:var(--text);border-radius:6px;padding:5px 9px;font-size:11px;cursor:pointer;
+  }
+  .list-item button.use{color:var(--accent);}
+  .list-item button.del{color:var(--danger);}
+  .modal-close{
+    width:100%;margin-top:6px;background:var(--panel2);border:1px solid var(--border);
+    color:var(--text);padding:11px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;
+  }
+  .empty-msg{color:var(--muted);font-size:12px;text-align:center;padding:14px 0;}
+  .bulk-box{border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:14px;background:var(--panel2);}
+  .bulk-box label{font-size:11px;margin-bottom:6px;}
+  .bulk-box textarea{font-size:12.5px;text-transform:none;resize:vertical;font-family:'Consolas',monospace;margin-bottom:8px;}
+  .bulk-btn{background:var(--accent-grad);border:none;color:#fff;border-radius:8px;padding:9px 12px;font-size:12px;cursor:pointer;font-weight:600;width:100%;}
+  .bulk-btn:hover{filter:brightness(1.08);}
+
+  .hist-overlay{display:none;position:fixed;inset:0;background:var(--bg-grad), var(--bg);z-index:80;overflow-y:auto;padding:24px;}
+  .hist-overlay.open{display:block;}
+  .hist-wrap{max-width:900px;margin:0 auto;}
+  .hist-search-row{display:flex;gap:10px;margin-bottom:18px;}
+  .hist-search-row input{flex:1;}
+  .hist-list{display:flex;flex-direction:column;gap:10px;}
+  .hist-item{border:1px solid var(--border);border-radius:12px;padding:16px;background:var(--panel);box-shadow:var(--shadow);}
+  .hist-top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .hist-item .hist-date{font-size:11px;color:var(--muted);}
+  .hist-del-btn{
+    background:transparent;border:1px solid var(--border);color:var(--danger);
+    border-radius:7px;width:30px;height:30px;cursor:pointer;font-size:13px;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .hist-del-btn:hover{border-color:var(--danger);}
+  .hist-rota{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+  .hist-rota span{font-size:13.5px;font-weight:700;font-family:'Sora',sans-serif;}
+  .hist-rota .arrow{color:var(--accent);flex-shrink:0;font-size:15px;}
+  .hist-item-row{display:flex;align-items:center;gap:10px;border-top:1px solid var(--border);padding-top:12px;text-transform:none;}
+  .hist-badge{
+    font-size:11px;font-weight:700;background:var(--panel2);border:1px solid var(--border);
+    padding:4px 8px;border-radius:6px;flex-shrink:0;white-space:nowrap;
+  }
+  .hist-item-desc{font-size:13px;flex:1;}
+  .hist-count{color:var(--muted);font-size:12.5px;margin-bottom:14px;}
+
+  .pdv-card{
+    border:1px solid var(--border);border-radius:12px;padding:14px 16px;
+    background:var(--panel);box-shadow:var(--shadow);cursor:pointer;margin-bottom:10px;
+  }
+  .pdv-card:hover{border-color:var(--accent);}
+  .pdv-card-top{display:flex;justify-content:space-between;align-items:center;}
+  .pdv-card-nome{font-weight:700;font-size:14px;font-family:'Sora',sans-serif;}
+  .pdv-card-arrow{color:var(--muted);font-size:18px;}
+  .pdv-card-stats{display:flex;gap:14px;margin-top:8px;font-size:12.5px;}
+  .stat-recebido{color:var(--accent);font-weight:600;}
+  .stat-enviado{color:var(--muted);font-weight:600;}
+
+  .aba-detalhe-row{display:flex;gap:8px;margin-bottom:16px;}
+  .aba-detalhe-btn{
+    flex:1;background:var(--panel2);border:1px solid var(--border);color:var(--muted);
+    padding:11px;border-radius:10px;font-size:12.5px;font-weight:700;cursor:pointer;
+    font-family:'Sora',sans-serif;
+  }
+  .aba-detalhe-btn.active{background:var(--accent-grad);color:#fff;border-color:transparent;}
+  .hist-rota-simples{font-size:12.5px;color:var(--muted);margin-bottom:8px;text-transform:none;}
+</style>
+</head>
+<body>
+
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <div class="login-title">Remanejamento VX Case</div>
+    <div class="login-sub">Selecione seu nome para continuar</div>
+    <div class="login-grid" id="loginGrid"></div>
+  </div>
+</div>
+
+<div class="wrap" id="mainApp" style="display:none;">
+  <div class="topbar">
+    <div>
+      <div class="brand">Remanejamento · VX Case</div>
+      <div class="sub">Anote, salve e gere a mensagem em segundos.</div>
+    </div>
+    <div class="topbar-right">
+      <div class="user-chip">
+        <div class="user-avatar" id="userAvatar">?</div>
+        <span id="userNameLabel">-</span>
+      </div>
+      <button class="icon-btn" onclick="trocarUsuario()">Trocar</button>
+      <button class="icon-btn" id="themeToggle" onclick="toggleTheme()">🌙</button>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tabNotasBtn" onclick="showTab('notas')">📝 Bloco de Notas</button>
+    <button class="tab-btn" id="tabGerarBtn" onclick="showTab('gerar')">💬 Mensagem</button>
+    <button class="tab-btn" id="tabEmAndamentoBtn" onclick="showTab('andamento')" style="display:none;">🔴 Em andamento</button>
+  </div>
+
+  <div id="panelNotas">
+    <div class="card">
+      <div class="card-head">
+        <h2>📝 Bloco de Notas</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="mini-btn" onclick="openDestinos(null)">Destinos/PDVs</button>
+          <button class="mini-btn" onclick="openProdutos(null)">Produtos</button>
+          <button class="mini-btn" onclick="openHistorico()">Histórico</button>
+        </div>
+      </div>
+      <div class="sub" style="margin-bottom:14px;">Cada origem (DE) é uma coluna. Dentro dela, adicione quantos destinos (PARA) precisar, cada um com seus itens.</div>
+
+      <div class="origens-scroll" id="origensContainer"></div>
+
+      <div class="action-row">
+        <button class="btn-secondary" onclick="salvarRascunho(true)">📌 Pré-salvar</button>
+        <button class="btn-secondary" onclick="salvarRegistro()">✅ Salvar</button>
+        <button class="btn-primary" onclick="irParaGerarMensagem()">🚀 Gerar mensagem</button>
+      </div>
+      <div class="save-status" id="saveStatus"></div>
+    </div>
+  </div>
+
+  <div id="panelGerar" style="display:none;">
+    <button class="icon-btn back-btn" onclick="showTab('notas')">← Voltar ao bloco de notas</button>
+    <div id="mensagensContainer">
+      <div class="card out-wrap">
+        <label>Mensagem pronta</label>
+        <div class="msg-output">A mensagem gerada vai aparecer aqui.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlayEscolhaMsg">
+    <div class="modal">
+      <h3>Como você quer gerar a mensagem?</h3>
+      <div class="sub" style="margin-bottom:16px;">Você tem mais de um destino (PARA). Escolha o formato:</div>
+      <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="confirmarGeracao('unica')">📄 Mensagem única com todos os destinos</button>
+      <button class="btn-secondary" style="width:100%;" onclick="confirmarGeracao('separada')">📑 Uma mensagem separada por destino</button>
+      <button class="modal-close" onclick="closeModal('overlayEscolhaMsg')">Cancelar</button>
+    </div>
+  </div>
+
+  <div id="panelAndamento" style="display:none;">
+    <button class="icon-btn back-btn" onclick="showTab('notas')">← Voltar ao bloco de notas</button>
+    <div class="card">
+      <div class="card-head"><h2>🔴 Em andamento</h2></div>
+      <div class="sub" style="margin-bottom:14px;">Outros usuários estão mexendo em PDVs que são seus. Acompanhe em tempo real.</div>
+      <div id="listaAndamento"></div>
+    </div>
+  </div>
+
+  <datalist id="destinosDatalist"></datalist>
+  <datalist id="produtosCodDatalist"></datalist>
+  <datalist id="produtosDescDatalist"></datalist>
+</div>
+
+<div class="overlay" id="overlayDestinos">
+  <div class="modal">
+    <h3>Destinos / PDVs cadastrados</h3>
+    <div class="modal-add-row">
+      <input id="novoDestino" placeholder="NOME DO PDV">
+      <button onclick="addDestino()">Adicionar</button>
+    </div>
+    <div class="bulk-box">
+      <label>Adicionar vários de uma vez (um por linha)</label>
+      <textarea id="bulkDestinos" rows="4" placeholder="LOJA SHOPPING BARRA&#10;LOJA SALVADOR SHOPPING&#10;LOJA PARALELA"></textarea>
+      <button class="bulk-btn" onclick="addDestinosBulk()">Adicionar todos</button>
+    </div>
+    <div id="listaDestinos"></div>
+    <button class="modal-close" onclick="closeModal('overlayDestinos')">Fechar</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlayProdutos">
+  <div class="modal">
+    <h3>Produtos cadastrados</h3>
+    <div class="modal-add-row">
+      <input id="novoCod" placeholder="CÓD" style="max-width:90px;">
+      <input id="novoDesc" placeholder="DESCRIÇÃO">
+      <button onclick="addProduto()">Adicionar</button>
+    </div>
+    <div class="bulk-box">
+      <label>Adicionar vários de uma vez (um por linha: código - descrição)</label>
+      <textarea id="bulkProdutos" rows="5" placeholder="1234 - CAMISETA POLO AZUL P&#10;5678 - CALÇA JEANS M&#10;9012 - BONE PRETO"></textarea>
+      <button class="bulk-btn" onclick="addProdutosBulk()">Adicionar todos</button>
+    </div>
+    <div id="listaProdutos"></div>
+    <button class="modal-close" onclick="closeModal('overlayProdutos')">Fechar</button>
+  </div>
+</div>
+
+<div class="hist-overlay" id="overlayHistorico">
+  <div class="hist-wrap">
+    <button class="icon-btn back-btn" onclick="closeModal('overlayHistorico')">← Voltar</button>
+    <h2 style="font-size:20px;margin:0 0 4px;">Histórico de registros</h2>
+    <div class="sub" style="margin-bottom:18px;">Tudo que você já salvou, por origem e destino.</div>
+    <div class="hist-search-row">
+      <input id="buscaHistorico" list="destinosDatalist" placeholder="Buscar por PDV (origem ou destino)..." oninput="filtrarHistorico()" style="text-transform:uppercase;">
+      <button class="mini-btn" onclick="limparBuscaHistorico()">Limpar</button>
+    </div>
+    <div class="hist-count" id="histCount"></div>
+    <div class="hist-list" id="listaHistorico"></div>
+  </div>
+</div>
+
+<script>
+/* ================= CONFIG SUPABASE ================= */
+const SUPABASE_URL = 'https://fevhyllvfhvzzfhwyjuk.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZldmh5bGx2Zmh2enpmaHd5anVrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NzEyMTcsImV4cCI6MjA5NDQ0NzIxN30.GJRgEKW1bVWX1957_bKCTO6aVmR_rXWRCmo9-ZJDPiE';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const USUARIOS = ['Rodrigo Pereira', 'Raquel França', 'Amanda Menezes', 'Suiane Lopes', 'Felipe Santana'];
+let currentUser = null;
+let idCounter = 0;
+let pickTargetField = null;
+let pickTargetItemRow = null;
+let isDirty = false;
+let historicoCache = [];
+let destinosCache = [];
+let produtosCache = [];
+let emAndamentoCache = [];
+let syncTimeout = null;
+let andamentoChannel = null;
+
+function newId(prefix){ idCounter++; return prefix + '_' + idCounter; }
+
+/* ================= LOGIN ================= */
+function iniciais(nome){ return nome.split(' ').map(p => p[0]).join('').slice(0,2).toUpperCase(); }
+function montarLogin(){
+  const grid = document.getElementById('loginGrid');
+  grid.innerHTML = USUARIOS.map(nome => `
+    <button class="login-name" onclick="entrar('${nome}')">
+      <span class="login-avatar">${iniciais(nome)}</span> ${nome}
+    </button>
+  `).join('');
+}
+async function entrar(nome){
+  currentUser = nome;
+  document.getElementById('loginOverlay').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'block';
+  document.getElementById('userAvatar').textContent = iniciais(nome);
+  document.getElementById('userNameLabel').textContent = nome;
+  showTab('notas');
+  await carregarDestinos();
+  await carregarProdutos();
+  await carregarRascunho();
+  subscribeEmAndamento();
+}
+async function trocarUsuario(){
+  await limparMinhasSessoesAndamento();
+  if(andamentoChannel){ sb.removeChannel(andamentoChannel); andamentoChannel = null; }
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('loginOverlay').style.display = 'flex';
+  document.getElementById('origensContainer').innerHTML = '';
+  document.getElementById('tabEmAndamentoBtn').style.display = 'none';
+  currentUser = null;
+}
+
+/* ================= TABS ================= */
+function showTab(tab){
+  document.getElementById('panelNotas').style.display = tab === 'notas' ? 'block' : 'none';
+  document.getElementById('panelGerar').style.display = tab === 'gerar' ? 'block' : 'none';
+  document.getElementById('panelAndamento').style.display = tab === 'andamento' ? 'block' : 'none';
+  document.getElementById('tabNotasBtn').classList.toggle('active', tab === 'notas');
+  document.getElementById('tabGerarBtn').classList.toggle('active', tab === 'gerar');
+  document.getElementById('tabEmAndamentoBtn').classList.toggle('active', tab === 'andamento');
+  if(tab === 'andamento') renderAndamento();
+}
+
+/* ================= THEME ================= */
+function toggleTheme(){
+  document.body.classList.toggle('light');
+  const isLight = document.body.classList.contains('light');
+  localStorage.setItem('remanejamento_theme', isLight ? 'light' : 'dark');
+  document.getElementById('themeToggle').textContent = isLight ? '☀️' : '🌙';
+}
+(function initTheme(){
+  const saved = localStorage.getItem('remanejamento_theme');
+  if(saved === 'light'){ document.body.classList.add('light'); }
+})();
+
+/* ================= DESTINOS (cadastro compartilhado via Supabase) ================= */
+function refreshDestinosDatalist(){
+  document.getElementById('destinosDatalist').innerHTML = destinosCache.map(d => `<option value="${d.nome}">`).join('');
+}
+async function carregarDestinos(){
+  try{
+    const { data, error } = await sb.from('remanejamento_destinos_cadastro').select('*').order('nome');
+    if(error) throw error;
+    destinosCache = data || [];
+  }catch(e){
+    console.error(e);
+    destinosCache = [];
+  }
+  refreshDestinosDatalist();
+}
+function openDestinos(targetFieldId){
+  pickTargetField = targetFieldId;
+  renderDestinos();
+  document.getElementById('overlayDestinos').classList.add('open');
+}
+function renderDestinos(){
+  const container = document.getElementById('listaDestinos');
+  if(destinosCache.length === 0){ container.innerHTML = '<div class="empty-msg">Nenhum destino cadastrado ainda.</div>'; return; }
+  container.innerHTML = destinosCache.map((d, i) => `
+    <div class="list-item">
+      <div class="info">${d.nome}</div>
+      <select onchange="setResponsavel('${d.nome.replace(/'/g,"\\'")}', this.value)">
+        <option value="">Sem responsável</option>
+        ${USUARIOS.map(u => `<option value="${u}" ${d.responsavel === u ? 'selected' : ''}>${u}</option>`).join('')}
+      </select>
+      <div class="actions">
+        ${pickTargetField ? `<button class="use" onclick="useDestino(${i})">Usar</button>` : ''}
+        <button class="del" onclick="delDestino('${d.nome.replace(/'/g,"\\'")}')">Remover</button>
+      </div>
+    </div>
+  `).join('');
+}
+async function addDestino(){
+  const input = document.getElementById('novoDestino');
+  const val = input.value.trim().toUpperCase();
+  if(!val) return;
+  try{
+    await sb.from('remanejamento_destinos_cadastro').upsert({ nome: val });
+    input.value = '';
+    await carregarDestinos();
+    renderDestinos();
+  }catch(e){ console.error(e); alert('Erro ao adicionar destino.'); }
+}
+async function addDestinosBulk(){
+  const raw = document.getElementById('bulkDestinos').value;
+  const linhas = [...new Set(raw.split('\n').map(l => l.trim().toUpperCase()).filter(l => l.length > 0))];
+  if(linhas.length === 0) return;
+  try{
+    await sb.from('remanejamento_destinos_cadastro').upsert(linhas.map(nome => ({ nome })));
+    document.getElementById('bulkDestinos').value = '';
+    await carregarDestinos();
+    renderDestinos();
+  }catch(e){ console.error(e); alert('Erro ao adicionar destinos.'); }
+}
+async function delDestino(nome){
+  try{
+    await sb.from('remanejamento_destinos_cadastro').delete().eq('nome', nome);
+    await carregarDestinos();
+    renderDestinos();
+  }catch(e){ console.error(e); alert('Erro ao remover destino.'); }
+}
+async function setResponsavel(nome, responsavel){
+  try{
+    await sb.from('remanejamento_destinos_cadastro').update({ responsavel: responsavel || null }).eq('nome', nome);
+    const d = destinosCache.find(x => x.nome === nome);
+    if(d) d.responsavel = responsavel || null;
+  }catch(e){ console.error(e); alert('Erro ao definir responsável.'); }
+}
+function useDestino(i){
+  if(pickTargetField){ document.getElementById(pickTargetField).value = destinosCache[i].nome; }
+  closeModal('overlayDestinos');
+}
+
+/* ================= PRODUTOS (cadastro compartilhado via Supabase) ================= */
+function refreshProdutosDatalist(){
+  document.getElementById('produtosCodDatalist').innerHTML = produtosCache.map(p => `<option value="${p.cod}">`).join('');
+  document.getElementById('produtosDescDatalist').innerHTML = produtosCache.map(p => `<option value="${p.descricao}">`).join('');
+}
+async function carregarProdutos(){
+  try{
+    const { data, error } = await sb.from('remanejamento_produtos_cadastro').select('*').order('cod');
+    if(error) throw error;
+    produtosCache = data || [];
+  }catch(e){
+    console.error(e);
+    produtosCache = [];
+  }
+  refreshProdutosDatalist();
+}
+function openProdutos(targetItemRowId){
+  pickTargetItemRow = targetItemRowId;
+  renderProdutos();
+  document.getElementById('overlayProdutos').classList.add('open');
+}
+function renderProdutos(){
+  const container = document.getElementById('listaProdutos');
+  if(produtosCache.length === 0){ container.innerHTML = '<div class="empty-msg">Nenhum produto cadastrado ainda.</div>'; return; }
+  container.innerHTML = produtosCache.map((p, i) => `
+    <div class="list-item">
+      <div class="info">${p.cod} — ${p.descricao}</div>
+      <div class="actions">
+        ${pickTargetItemRow ? `<button class="use" onclick="useProduto(${i})">Usar</button>` : ''}
+        <button class="del" onclick="delProduto('${(p.cod||'').replace(/'/g,"\\'")}')">Remover</button>
+      </div>
+    </div>
+  `).join('');
+}
+async function addProduto(){
+  const cod = document.getElementById('novoCod').value.trim().toUpperCase();
+  const descricao = document.getElementById('novoDesc').value.trim().toUpperCase();
+  if(!cod && !descricao) return;
+  try{
+    await sb.from('remanejamento_produtos_cadastro').upsert({ cod: cod || descricao, descricao });
+    document.getElementById('novoCod').value = '';
+    document.getElementById('novoDesc').value = '';
+    await carregarProdutos();
+    renderProdutos();
+  }catch(e){ console.error(e); alert('Erro ao adicionar produto.'); }
+}
+async function addProdutosBulk(){
+  const raw = document.getElementById('bulkProdutos').value;
+  const linhas = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  if(linhas.length === 0) return;
+  const registros = [];
+  linhas.forEach(linha => {
+    let partes = linha.split(/\s-\s|\t|;|\|/);
+    if(partes.length < 2){ partes = linha.split('-'); }
+    const cod = (partes[0] || '').trim().toUpperCase();
+    const descricao = partes.slice(1).join(' ').trim().toUpperCase();
+    if(cod || descricao){ registros.push({ cod: cod || descricao, descricao }); }
+  });
+  if(registros.length === 0) return;
+  try{
+    await sb.from('remanejamento_produtos_cadastro').upsert(registros);
+    document.getElementById('bulkProdutos').value = '';
+    await carregarProdutos();
+    renderProdutos();
+  }catch(e){ console.error(e); alert('Erro ao adicionar produtos.'); }
+}
+async function delProduto(cod){
+  try{
+    await sb.from('remanejamento_produtos_cadastro').delete().eq('cod', cod);
+    await carregarProdutos();
+    renderProdutos();
+  }catch(e){ console.error(e); alert('Erro ao remover produto.'); }
+}
+function useProduto(i){
+  if(pickTargetItemRow){
+    const row = document.getElementById(pickTargetItemRow);
+    row.querySelector('.cod').value = produtosCache[i].cod;
+    row.querySelector('.desc').value = produtosCache[i].descricao;
+    ajustarFonte(row.querySelector('.cod'));
+    autoGrow(row.querySelector('.desc'));
+  }
+  closeModal('overlayProdutos');
+}
+function autoFillProduto(rowId, campo){
+  const row = document.getElementById(rowId);
+  if(campo === 'cod'){
+    const val = row.querySelector('.cod').value.trim().toUpperCase();
+    const match = produtosCache.find(p => (p.cod||'').toUpperCase() === val);
+    if(match) row.querySelector('.desc').value = match.descricao;
+  } else {
+    const val = row.querySelector('.desc').value.trim().toUpperCase();
+    const match = produtosCache.find(p => (p.descricao||'').toUpperCase() === val);
+    if(match) row.querySelector('.cod').value = match.cod;
+  }
+}
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+/* ================= FONTE AUTOMÁTICA ================= */
+function marcarDirty(){ isDirty = true; agendarSyncAndamento(); }
+function autoGrow(el){
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+function ajustarFonte(el){
+  const base = (el.classList.contains('cod') || el.classList.contains('desc')) ? 12.5 : 14;
+  const min = 8.5;
+  let size = base;
+  el.style.fontSize = size + 'px';
+  while(el.scrollWidth > el.clientWidth && size > min){
+    size -= 0.5;
+    el.style.fontSize = size + 'px';
+  }
+}
+function ajustarFontesVisiveis(){
+  document.querySelectorAll('.o-de, .d-para, .cod').forEach(el => { if(el.value) ajustarFonte(el); });
+  document.querySelectorAll('textarea.desc').forEach(el => autoGrow(el));
+}
+
+/* ================= BLOCOS DE ORIGEM/DESTINO (colunas) ================= */
+function addOrigemBlock(de=''){
+  const oid = newId('origem');
+  const div = document.createElement('div');
+  div.className = 'origem-block';
+  div.id = oid;
+  div.innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+      <span class="field-label">DE</span>
+      <input class="o-de" list="destinosDatalist" autocomplete="off" placeholder="EX: BELÉM BOULEVARD LOJA 459" value="${de}" title="${de}" oninput="marcarDirty(); ajustarFonte(this); this.title=this.value;">
+      <button class="rm-block-btn" onclick="removeOrigemBlock('${oid}')" title="Remover origem">×</button>
+    </div>
+    <div class="destinos-container" id="destinos_${oid}"></div>
+    <button class="add-btn" style="margin-top:10px;" onclick="addDestinoBlock('${oid}')">+ Adicionar destino (PARA)</button>
+  `;
+  document.getElementById('origensContainer').insertBefore(div, document.getElementById('addOrigemColBtn'));
+  addDestinoBlock(oid);
+  marcarDirty();
+  return oid;
+}
+function removeOrigemBlock(oid){
+  document.getElementById(oid).remove();
+  marcarDirty();
+  if(document.querySelectorAll('#origensContainer > .origem-block').length === 0){ addOrigemBlock(); }
+}
+function addDestinoBlock(oid, para=''){
+  const did = newId('destino');
+  const div = document.createElement('div');
+  div.className = 'destino-block';
+  div.id = did;
+  div.innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+      <span class="field-label">PARA</span>
+      <input class="d-para" list="destinosDatalist" autocomplete="off" placeholder="EX: BELÉM PARQUE QUIOSQUE 07" value="${para}" title="${para}" oninput="marcarDirty(); ajustarFonte(this); this.title=this.value; agendarStatsPDV('${did}');">
+      <button class="rm-block-btn" onclick="removeDestinoBlockG('${did}','${oid}')" title="Remover destino">×</button>
+    </div>
+    <div style="display:flex;gap:16px;align-items:flex-start;">
+      <div style="flex:1;min-width:0;">
+        <div class="items-list" id="items_${did}"></div>
+        <button class="add-btn" onclick="addItemG('${did}')">+ Adicionar item</button>
+      </div>
+      <div class="stats-sidebar" id="stats_${did}">
+        <div class="stats-title">Remanejado este mês</div>
+        <div class="stats-card" data-cat="capas"><span>Capas</span><span class="stats-val">–</span></div>
+        <div class="stats-card" data-cat="peliculas"><span>Películas</span><span class="stats-val">–</span></div>
+        <div class="stats-card" data-cat="outros"><span>Outros acessórios</span><span class="stats-val">–</span></div>
+      </div>
+    </div>
+  `;
+  document.getElementById('destinos_' + oid).appendChild(div);
+  addItemG(did);
+  marcarDirty();
+  if(para) carregarStatsPDV(did);
+  return did;
+}
+let statsTimeout = null;
+function agendarStatsPDV(did){
+  clearTimeout(statsTimeout);
+  statsTimeout = setTimeout(() => carregarStatsPDV(did), 800);
+}
+async function carregarStatsPDV(did){
+  const blockEl = document.getElementById(did);
+  const statsEl = document.getElementById('stats_' + did);
+  if(!blockEl || !statsEl) return;
+  const para = blockEl.querySelector('.d-para').value.trim();
+  if(!para){
+    statsEl.querySelectorAll('.stats-val').forEach(v => v.textContent = '–');
+    return;
+  }
+  const inicioMes = new Date();
+  inicioMes.setDate(1);
+  inicioMes.setHours(0,0,0,0);
+  try{
+    const { data, error } = await sb.from('remanejamento_registros')
+      .select('descricao, qtd')
+      .ilike('para', para)
+      .gte('criado_em', inicioMes.toISOString());
+    if(error) throw error;
+    let capas = 0, peliculas = 0, outros = 0;
+    (data || []).forEach(r => {
+      const desc = (r.descricao || '').toLowerCase();
+      const qtd = parseInt(r.qtd) || 0;
+      if(desc.includes('capa')) capas += qtd;
+      else if(desc.includes('pelicula') || desc.includes('película') || desc.includes('protetor')) peliculas += qtd;
+      else outros += qtd;
+    });
+    statsEl.querySelector('[data-cat="capas"] .stats-val').textContent = capas;
+    statsEl.querySelector('[data-cat="peliculas"] .stats-val').textContent = peliculas;
+    statsEl.querySelector('[data-cat="outros"] .stats-val').textContent = outros;
+  }catch(e){ console.error(e); }
+}
+
+function removeDestinoBlockG(did, oid){
+  document.getElementById(did).remove();
+  marcarDirty();
+  if(document.querySelectorAll('#destinos_' + oid + ' .destino-block').length === 0){ addDestinoBlock(oid); }
+}
+function addItemG(did, cod='', desc='', qtd=''){
+  const iid = newId('item');
+  const div = document.createElement('div');
+  div.className = 'item-row';
+  div.id = iid;
+  div.innerHTML = `
+    <button class="pick-mini" onclick="openProdutos('${iid}')" title="Escolher produto">📋</button>
+    <input class="cod" list="produtosCodDatalist" autocomplete="off" value="${cod}" placeholder="CÓD" title="${cod}" oninput="autoFillProduto('${iid}','cod'); marcarDirty(); this.title=this.value;">
+    <textarea class="desc" rows="1" list="produtosDescDatalist" autocomplete="off" placeholder="DESCRIÇÃO DO PRODUTO" title="${desc}" oninput="autoFillProduto('${iid}','desc'); marcarDirty(); autoGrow(this); this.title=this.value;">${desc}</textarea>
+    <input class="qtd" value="${qtd}" placeholder="QTD" type="number" min="1" oninput="marcarDirty()">
+    <button class="rm-btn" onclick="document.getElementById('${iid}').remove(); marcarDirty();">🗑️</button>
+  `;
+  document.getElementById('items_' + did).appendChild(div);
+  marcarDirty();
+}
+
+function coletarOrigemBlocks(){
+  const blocks = [];
+  document.querySelectorAll('#origensContainer > .origem-block').forEach(ob => {
+    const de = ob.querySelector('.o-de').value.trim();
+    const destinos = [];
+    ob.querySelectorAll('.destino-block').forEach(db => {
+      const para = db.querySelector('.d-para').value.trim();
+      const itens = [];
+      db.querySelectorAll('.item-row').forEach(r => {
+        const cod = r.querySelector('.cod').value.trim();
+        const desc = r.querySelector('.desc').value.trim();
+        const qtd = r.querySelector('.qtd').value.trim();
+        if(cod || desc) itens.push({cod, desc, qtd});
+      });
+      if(para && itens.length > 0) destinos.push({para, itens});
+    });
+    if(de && destinos.length > 0) blocks.push({de, destinos});
+  });
+  return blocks;
+}
+function blocksToLinhas(blocks){
+  const linhas = [];
+  blocks.forEach(b => b.destinos.forEach(d => d.itens.forEach(it => {
+    linhas.push({de: b.de, para: d.para, cod: it.cod, desc: it.desc, qtd: it.qtd});
+  })));
+  return linhas;
+}
+function popularBlocosFromLinhas(linhas){
+  document.querySelectorAll('#origensContainer > .origem-block').forEach(el => el.remove());
+  if(!linhas || linhas.length === 0){ addOrigemBlock(); return; }
+
+  const porDe = [];
+  const deIndex = {};
+  linhas.forEach(l => {
+    if(!(l.de in deIndex)){ deIndex[l.de] = porDe.length; porDe.push({de: l.de, paras: []}); }
+    const grupoDe = porDe[deIndex[l.de]];
+    let paraGrupo = grupoDe.paras.find(p => p.para === l.para);
+    if(!paraGrupo){ paraGrupo = {para: l.para, itens: []}; grupoDe.paras.push(paraGrupo); }
+    paraGrupo.itens.push({cod: l.cod, desc: l.desc, qtd: l.qtd});
+  });
+
+  porDe.forEach(grupoDe => {
+    const oid = addOrigemBlock(grupoDe.de);
+    document.getElementById('destinos_' + oid).innerHTML = '';
+    grupoDe.paras.forEach(pg => {
+      const did = addDestinoBlock(oid, pg.para);
+      document.getElementById('items_' + did).innerHTML = '';
+      pg.itens.forEach(it => addItemG(did, it.cod, it.desc, it.qtd));
+    });
+  });
+  isDirty = false;
+  setTimeout(ajustarFontesVisiveis, 30);
+}
+
+/* ================= SUPABASE: RASCUNHO ================= */
+async function carregarRascunho(){
+  document.getElementById('saveStatus').textContent = 'Carregando rascunho...';
+  try{
+    const { data, error } = await sb.from('remanejamento_rascunhos').select('linhas').eq('usuario', currentUser).maybeSingle();
+    if(error) throw error;
+    popularBlocosFromLinhas(data ? data.linhas : []);
+    document.getElementById('saveStatus').textContent = data ? 'Rascunho carregado.' : '';
+  }catch(e){
+    console.error(e);
+    popularBlocosFromLinhas([]);
+    document.getElementById('saveStatus').textContent = 'Não foi possível carregar o rascunho (verifique a conexão/anon key).';
+  }
+}
+async function salvarRascunho(manual){
+  const linhas = blocksToLinhas(coletarOrigemBlocks());
+  const status = document.getElementById('saveStatus');
+  if(manual) status.textContent = 'Salvando rascunho...';
+  try{
+    const { error } = await sb.from('remanejamento_rascunhos').upsert({ usuario: currentUser, linhas, updated_at: new Date().toISOString() });
+    if(error) throw error;
+    isDirty = false;
+    status.textContent = '📌 Rascunho pré-salvo às ' + new Date().toLocaleTimeString('pt-BR');
+  }catch(e){
+    console.error(e);
+    status.textContent = 'Erro ao pré-salvar.';
+  }
+}
+setInterval(() => { if(isDirty && currentUser) salvarRascunho(false); }, 20000);
+
+/* ================= SUPABASE: SALVAR DE VEZ (registro por PDV) ================= */
+async function salvarRegistro(){
+  const linhas = blocksToLinhas(coletarOrigemBlocks());
+  if(linhas.length === 0){ alert('Preencha ao menos um DE, PARA e item.'); return; }
+
+  const jaGerou = confirm('Você já gerou a mensagem pra enviar no grupo?\n\nOK = Sim, já gerei, pode salvar\nCancelar = Ainda não gerei');
+  if(!jaGerou){
+    const irGerar = confirm('Quer ir gerar a mensagem agora antes de salvar?');
+    if(irGerar){ irParaGerarMensagem(); }
+    return;
+  }
+
+  const status = document.getElementById('saveStatus');
+  status.textContent = 'Salvando registros...';
+  try{
+    const rows = linhas.map(l => ({ usuario: currentUser, de: l.de, para: l.para, cod: l.cod, descricao: l.desc, qtd: l.qtd }));
+    const { error } = await sb.from('remanejamento_registros').insert(rows);
+    if(error) throw error;
+    await sb.from('remanejamento_rascunhos').delete().eq('usuario', currentUser);
+    popularBlocosFromLinhas([]);
+    isDirty = false;
+    await limparMinhasSessoesAndamento();
+    status.textContent = '✅ Registrado com sucesso — ' + linhas.length + ' item(ns) salvos.';
+  }catch(e){
+    console.error(e);
+    status.textContent = 'Erro ao salvar registro.';
+  }
+}
+
+/* ================= HISTORICO (cards por PDV, com detalhe Recebido/Enviado) ================= */
+let pdvDetalheAtual = null;
+let abaDetalheAtual = 'recebido';
+
+async function openHistorico(){
+  document.getElementById('overlayHistorico').classList.add('open');
+  document.getElementById('buscaHistorico').value = '';
+  document.getElementById('listaHistorico').innerHTML = '<div class="empty-msg">Carregando...</div>';
+  pdvDetalheAtual = null;
+  try{
+    const { data, error } = await sb.from('remanejamento_registros').select('*').eq('usuario', currentUser).order('criado_em', { ascending: false }).limit(500);
+    if(error) throw error;
+    historicoCache = data || [];
+    renderHistorico(historicoCache);
+  }catch(e){
+    console.error(e);
+    document.getElementById('listaHistorico').innerHTML = '<div class="empty-msg">Erro ao carregar registros.</div>';
+  }
+}
+function agruparPorPDV(lista){
+  const mapa = {};
+  lista.forEach(h => {
+    if(h.para){
+      if(!mapa[h.para]) mapa[h.para] = { nome: h.para, recebidos: [], enviados: [] };
+      mapa[h.para].recebidos.push(h);
+    }
+    if(h.de){
+      if(!mapa[h.de]) mapa[h.de] = { nome: h.de, recebidos: [], enviados: [] };
+      mapa[h.de].enviados.push(h);
+    }
+  });
+  return Object.values(mapa).sort((a,b) => a.nome.localeCompare(b.nome));
+}
+function renderHistorico(lista){
+  pdvDetalheAtual = null;
+  const container = document.getElementById('listaHistorico');
+  const grupos = agruparPorPDV(lista);
+  document.getElementById('histCount').textContent = grupos.length + ' ponto(s) de venda encontrados';
+  if(grupos.length === 0){ container.innerHTML = '<div class="empty-msg">Nenhum registro encontrado.</div>'; return; }
+  container.innerHTML = grupos.map(g => `
+    <div class="pdv-card" onclick="abrirDetalhePDV('${g.nome.replace(/'/g,"\\'")}')">
+      <div class="pdv-card-top">
+        <span class="pdv-card-nome">${g.nome}</span>
+        <span class="pdv-card-arrow">›</span>
+      </div>
+      <div class="pdv-card-stats">
+        <span class="stat-recebido">↓ ${g.recebidos.length} recebido(s)</span>
+        <span class="stat-enviado">↑ ${g.enviados.length} enviado(s)</span>
+      </div>
+    </div>
+  `).join('');
+}
+function abrirDetalhePDV(nome){
+  pdvDetalheAtual = nome;
+  abaDetalheAtual = 'recebido';
+  renderDetalhePDV();
+}
+function voltarListaPDVs(){
+  pdvDetalheAtual = null;
+  renderHistorico(historicoCache);
+}
+function trocarAbaDetalhe(aba){
+  abaDetalheAtual = aba;
+  renderDetalhePDV();
+}
+function renderDetalhePDV(){
+  const container = document.getElementById('listaHistorico');
+  const grupos = agruparPorPDV(historicoCache);
+  const grupo = grupos.find(g => g.nome === pdvDetalheAtual);
+  if(!grupo){ voltarListaPDVs(); return; }
+
+  document.getElementById('histCount').textContent = '';
+
+  const lista = abaDetalheAtual === 'recebido' ? grupo.recebidos : grupo.enviados;
+  const itensHtml = lista.length === 0
+    ? '<div class="empty-msg">Nada por aqui ainda.</div>'
+    : lista.map(h => `
+        <div class="hist-item" id="hist_${h.id}">
+          <div class="hist-top-row">
+            <span class="hist-date">${new Date(h.criado_em).toLocaleString('pt-BR')}</span>
+            <button class="hist-del-btn" onclick="deletarRegistro(${h.id})" title="Apagar">🗑️</button>
+          </div>
+          <div class="hist-rota-simples">${abaDetalheAtual === 'recebido' ? 'De: ' + h.de : 'Para: ' + h.para}</div>
+          <div class="hist-item-row">
+            <span class="hist-badge">${h.cod || ''}</span>
+            <span class="hist-item-desc">${h.descricao || ''}</span>
+            <span class="hist-badge">Qtd: ${h.qtd || '-'}</span>
+          </div>
+        </div>
+      `).join('');
+
+  container.innerHTML = `
+    <button class="icon-btn back-btn" onclick="voltarListaPDVs()">← Voltar aos PDVs</button>
+    <h3 style="font-size:16px;margin:0 0 14px;font-family:'Sora',sans-serif;">${pdvDetalheAtual}</h3>
+    <div class="aba-detalhe-row">
+      <button class="aba-detalhe-btn ${abaDetalheAtual === 'recebido' ? 'active' : ''}" onclick="trocarAbaDetalhe('recebido')">↓ Recebido (${grupo.recebidos.length})</button>
+      <button class="aba-detalhe-btn ${abaDetalheAtual === 'enviado' ? 'active' : ''}" onclick="trocarAbaDetalhe('enviado')">↑ Enviado (${grupo.enviados.length})</button>
+    </div>
+    <div class="hist-list">${itensHtml}</div>
+  `;
+}
+function filtrarHistorico(){
+  const termo = document.getElementById('buscaHistorico').value.trim().toUpperCase();
+  if(!termo){ renderHistorico(historicoCache); return; }
+  const filtrado = historicoCache.filter(h => (h.de || '').toUpperCase().includes(termo) || (h.para || '').toUpperCase().includes(termo));
+  renderHistorico(filtrado);
+}
+function limparBuscaHistorico(){
+  document.getElementById('buscaHistorico').value = '';
+  renderHistorico(historicoCache);
+}
+async function deletarRegistro(id){
+  if(!confirm('Apagar este registro do histórico? Essa ação não pode ser desfeita.')) return;
+  try{
+    const { error } = await sb.from('remanejamento_registros').delete().eq('id', id);
+    if(error) throw error;
+    historicoCache = historicoCache.filter(h => h.id !== id);
+    if(pdvDetalheAtual){ renderDetalhePDV(); } else { filtrarHistorico(); }
+  }catch(e){
+    console.error(e);
+    alert('Erro ao apagar registro.');
+  }
+}
+
+/* ================= EM ANDAMENTO (alerta em tempo real) ================= */
+function agendarSyncAndamento(){
+  clearTimeout(syncTimeout);
+  syncTimeout = setTimeout(syncEmAndamento, 700);
+}
+function coletarBlocksParaSync(){
+  const blocks = [];
+  document.querySelectorAll('#origensContainer > .origem-block').forEach(ob => {
+    const de = ob.querySelector('.o-de').value.trim();
+    ob.querySelectorAll('.destino-block').forEach(db => {
+      const para = db.querySelector('.d-para').value.trim();
+      if(!para) return;
+      const itens = [];
+      db.querySelectorAll('.item-row').forEach(r => {
+        const cod = r.querySelector('.cod').value.trim();
+        const desc = r.querySelector('.desc').value.trim();
+        const qtd = r.querySelector('.qtd').value.trim();
+        if(cod || desc) itens.push({cod, desc, qtd});
+      });
+      blocks.push({de, para, itens});
+    });
+  });
+  return blocks;
+}
+async function syncEmAndamento(){
+  if(!currentUser || destinosCache.length === 0) return;
+  const blocks = coletarBlocksParaSync();
+  const relevantes = [];
+  blocks.forEach(b => {
+    const cadastroPara = destinosCache.find(x => (x.nome || '').toUpperCase() === b.para.toUpperCase());
+    if(cadastroPara && cadastroPara.responsavel && cadastroPara.responsavel !== currentUser){
+      relevantes.push({ pdv: b.para, responsavel: cadastroPara.responsavel, de: b.de, para: b.para, itens: b.itens, papel: 'para' });
+    }
+    const cadastroDe = destinosCache.find(x => (x.nome || '').toUpperCase() === b.de.toUpperCase());
+    if(cadastroDe && cadastroDe.responsavel && cadastroDe.responsavel !== currentUser){
+      relevantes.push({ pdv: b.de, responsavel: cadastroDe.responsavel, de: b.de, para: b.para, itens: b.itens, papel: 'de' });
+    }
+  });
+  try{
+    for(const r of relevantes){
+      await sb.from('remanejamento_em_andamento').upsert({
+        usuario_editor: currentUser, pdv: r.pdv, responsavel: r.responsavel,
+        de: r.de, para: r.para, itens: r.itens, papel: r.papel, updated_at: new Date().toISOString()
+      });
+    }
+    const { data: minhas } = await sb.from('remanejamento_em_andamento').select('pdv').eq('usuario_editor', currentUser);
+    if(minhas){
+      const pdvsAtivos = new Set(relevantes.map(r => r.pdv));
+      for(const s of minhas){
+        if(!pdvsAtivos.has(s.pdv)){
+          await sb.from('remanejamento_em_andamento').delete().eq('usuario_editor', currentUser).eq('pdv', s.pdv);
+        }
+      }
+    }
+  }catch(e){ console.error(e); }
+}
+async function limparMinhasSessoesAndamento(){
+  if(!currentUser) return;
+  try{ await sb.from('remanejamento_em_andamento').delete().eq('usuario_editor', currentUser); }catch(e){ console.error(e); }
+}
+function subscribeEmAndamento(){
+  carregarEmAndamento();
+  andamentoChannel = sb.channel('realtime_app')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'remanejamento_em_andamento' }, () => {
+      carregarEmAndamento();
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'remanejamento_destinos_cadastro' }, () => {
+      carregarDestinos().then(() => { if(document.getElementById('overlayDestinos').classList.contains('open')) renderDestinos(); });
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'remanejamento_produtos_cadastro' }, () => {
+      carregarProdutos().then(() => { if(document.getElementById('overlayProdutos').classList.contains('open')) renderProdutos(); });
+    })
+    .subscribe();
+}
+async function carregarEmAndamento(){
+  if(!currentUser) return;
+  try{
+    const { data, error } = await sb.from('remanejamento_em_andamento').select('*').eq('responsavel', currentUser).order('updated_at', { ascending: false });
+    if(error) throw error;
+    emAndamentoCache = (data || []).filter(e => e.usuario_editor !== currentUser);
+  }catch(e){
+    console.error(e);
+    emAndamentoCache = [];
+  }
+  atualizarBadgeEmAndamento();
+  if(document.getElementById('panelAndamento').style.display !== 'none'){ renderAndamento(); }
+}
+function atualizarBadgeEmAndamento(){
+  const btn = document.getElementById('tabEmAndamentoBtn');
+  if(emAndamentoCache.length > 0){
+    btn.style.display = 'block';
+    btn.classList.add('blinking-tab');
+  } else {
+    btn.style.display = 'none';
+    btn.classList.remove('blinking-tab');
+  }
+}
+function renderAndamento(){
+  const container = document.getElementById('listaAndamento');
+  if(emAndamentoCache.length === 0){
+    container.innerHTML = '<div class="empty-msg">Nada em andamento no momento.</div>';
+    return;
+  }
+  container.innerHTML = emAndamentoCache.map(e => `
+    <div class="hist-item" style="margin-bottom:12px;">
+      <div class="hist-date">Atualizado às ${new Date(e.updated_at).toLocaleTimeString('pt-BR')}</div>
+      <div class="hist-de-para">${e.usuario_editor} está usando seu PDV como ${e.papel === 'de' ? 'origem (DE)' : 'destino (PARA)'}</div>
+      <div class="hist-line" style="margin-bottom:6px;"><b>DE:</b> ${e.de || '-'} &nbsp;→&nbsp; <b>PARA:</b> ${e.para || '-'}</div>
+      ${(e.itens || []).map(it => `<div class="hist-line">${it.cod || ''} ${it.desc || ''} ${it.qtd ? '(Qtd: '+it.qtd+')' : ''}</div>`).join('')}
+    </div>
+  `).join('');
+}
+
+/* ================= GREETING ================= */
+function saudacao(){
+  const h = new Date().getHours();
+  if(h >= 5 && h < 12) return 'Bom dia';
+  if(h >= 12 && h < 18) return 'Boa tarde';
+  return 'Boa noite';
+}
+function paraNomeNormal(str){
+  if(!str) return str;
+  const minusculas = ['de','da','do','das','dos','e','em','com','para','a','o','as','os','no','na','nos','nas'];
+  return str.toLowerCase().split(' ').map((palavra, i) => {
+    if(!palavra) return palavra;
+    if(i > 0 && minusculas.includes(palavra)) return palavra;
+    return palavra.charAt(0).toUpperCase() + palavra.slice(1);
+  }).join(' ');
+}
+
+/* ================= GERAR MENSAGEM ================= */
+function montarMensagemFromGrupos(grupos, totalItens){
+  const plural = totalItens > 1;
+  const referencia = plural ? 'desses itens' : 'desse item';
+  const pedido = plural ? 'Por gentileza' : 'Por favor';
+  const destinosEspeciais = ['ESTOQUE GERAL', 'ESTOQUE QUOTES', 'ADM ESTOQUE'];
+
+  let msg = `${saudacao()}! ${pedido}, solicito que realizem o remanejamento ${referencia} abaixo:\n\n`;
+
+  grupos.forEach((g, idx) => {
+    msg += `📤 *DE:* ${paraNomeNormal(g.de)}\n📥 *PARA:* ${paraNomeNormal(g.para)}\n\n*ITENS:*\n\n`;
+    g.itens.forEach(it => {
+      msg += `*${it.cod}* — ${paraNomeNormal(it.desc || '')}\n*(Quantidade: ${it.qtd || '-'})*\n\n`;
+    });
+    if(!destinosEspeciais.includes(g.para.toUpperCase())){
+      msg += `⚠️ *Por favor, pontuem o movimento assim que o remanejamento for realizado.*\n\n`;
+    } else {
+      msg += `⚠️ *Conforme novo direcionamento da Diretoria, os pontos de venda precisam informar no prazo máximo de 24 horas se o item foi enviado ou se está inapto para venda.*\n\n`;
+    }
+    if(idx < grupos.length - 1){ msg += `----------\n\n`; }
+  });
+
+  msg += `Obrigado!`;
+  return msg;
+}
+let gruposParaMensagem = [];
+let cardViews = [];
+let cardSelecionado = [];
+let cardEls = [];
+
+function irParaGerarMensagem(){
+  const blocks = coletarOrigemBlocks();
+  if(blocks.length === 0){
+    alert('Preencha ao menos um DE, um PARA e um item antes.');
+    return;
+  }
+  let grupos = [];
+  blocks.forEach(b => {
+    b.destinos.forEach(d => {
+      grupos.push({de: b.de, para: d.para, itens: d.itens});
+    });
+  });
+  if(grupos.length === 0){
+    alert('Preencha ao menos um DE, um PARA e um item antes.');
+    return;
+  }
+  gruposParaMensagem = grupos;
+
+  if(grupos.length > 1){
+    document.getElementById('overlayEscolhaMsg').classList.add('open');
+  } else {
+    confirmarGeracao('unica');
+  }
+}
+
+function confirmarGeracao(modo){
+  closeModal('overlayEscolhaMsg');
+  const grupos = gruposParaMensagem;
+  let lista;
+  if(modo === 'unica'){
+    const totalItens = grupos.reduce((s, g) => s + g.itens.length, 0);
+    lista = [{ titulo: null, texto: montarMensagemFromGrupos(grupos, totalItens), grupos: grupos }];
+  } else {
+    lista = grupos.map(g => ({
+      titulo: `${g.de} → ${g.para}`,
+      texto: montarMensagemFromGrupos([g], g.itens.length),
+      grupos: [g]
+    }));
+  }
+  renderMensagens(lista);
+  showTab('gerar');
+}
+
+function renderMensagens(lista){
+  cardViews = [];
+  cardSelecionado = [];
+  cardEls = [];
+  const container = document.getElementById('mensagensContainer');
+  container.innerHTML = '';
+  lista.forEach(m => criarCard(container, m.titulo || 'Mensagem pronta', m.texto, m.grupos, true));
+}
+
+function criarCard(container, tituloPrincipal, textoPrincipal, grupos, marcarComoOperacional){
+  const i = cardViews.length;
+  cardViews.push([{ titulo: tituloPrincipal, texto: textoPrincipal, operacional: !!marcarComoOperacional, grupos: grupos || null, avisado: false }]);
+  cardSelecionado.push(0);
+
+  const card = document.createElement('div');
+  card.className = 'card out-wrap';
+  card.style.marginBottom = '14px';
+
+  const tabRow = document.createElement('div');
+  tabRow.className = 'card-tab-row';
+  tabRow.style.display = 'none';
+
+  const output = document.createElement('div');
+  output.className = 'msg-output';
+  output.textContent = textoPrincipal;
+
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.id = 'copyBtn_' + i;
+  btn.textContent = 'Copiar';
+  btn.onclick = () => copyMensagem(i);
+
+  card.appendChild(tabRow);
+  card.appendChild(output);
+  card.appendChild(btn);
+  container.appendChild(card);
+  cardEls.push({ card, tabRow, output });
+  return i;
+}
+
+function renderTabsCard(i){
+  const views = cardViews[i];
+  const { tabRow, output } = cardEls[i];
+  if(views.length <= 1){
+    tabRow.style.display = 'none';
+  } else {
+    tabRow.style.display = 'flex';
+    tabRow.innerHTML = views.map((v, vi) => `
+      <button class="card-tab-btn ${vi === cardSelecionado[i] ? 'active' : ''}" onclick="selecionarView(${i}, ${vi})">${v.titulo}</button>
+    `).join('');
+  }
+  output.textContent = views[cardSelecionado[i]].texto;
+}
+function selecionarView(i, vi){
+  cardSelecionado[i] = vi;
+  renderTabsCard(i);
+}
+
+function copyMensagem(i){
+  const view = cardViews[i][cardSelecionado[i]];
+  navigator.clipboard.writeText(view.texto).then(() => {
+    const btn = document.getElementById('copyBtn_' + i);
+    btn.textContent = 'Copiado!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 1500);
+
+    if(view.operacional && view.grupos && !view.avisado){
+      view.avisado = true;
+      if(confirm('Deseja informar ao Destino para ir coletar na Origem?')){
+        gerarAvisosDestino(i, view.grupos);
+      }
+    }
+  });
+}
+
+function montarMensagemDestino(desNomes, itens){
+  const desTexto = desNomes.length === 1
+    ? desNomes[0]
+    : desNomes.slice(0, -1).join(', ') + ' e ' + desNomes[desNomes.length - 1];
+  const plural = itens.length > 1;
+
+  let msg = `${saudacao()}!\n\n`;
+  msg += `Em nossa análise semanal, identificamos que o estoque de alguns produtos está zerado ou em baixa neste ponto de venda.\n\n`;
+  msg += `Informamos que foi solicitado ${desNomes.length > 1 ? 'nas lojas' : 'na loja'} *${desTexto}* o envio dos códigos abaixo para suprir até a chegada no pedido semanal:\n\n`;
+  itens.forEach(it => {
+    msg += `*${it.cod}* — ${it.desc || ''}\n*(Quantidade: ${it.qtd || '-'})*\n\n`;
+  });
+  msg += `Solicito que coletem ${plural ? 'os itens' : 'o item'} no ponto de venda citado, por favor.\n\n`;
+  msg += `Obrigado!`;
+  return msg;
+}
+
+function gerarAvisosDestino(i, grupos){
+  const porPara = {};
+  grupos.forEach(g => {
+    if(!porPara[g.para]) porPara[g.para] = { de: new Set(), itens: [] };
+    porPara[g.para].de.add(paraNomeNormal(g.de));
+    porPara[g.para].itens.push(...g.itens.map(it => ({ cod: it.cod, desc: paraNomeNormal(it.desc || ''), qtd: it.qtd })));
+  });
+  Object.entries(porPara).forEach(([para, dados]) => {
+    const texto = montarMensagemDestino([...dados.de], dados.itens);
+    cardViews[i].push({ titulo: `Aviso · ${paraNomeNormal(para)}`, texto, operacional: false });
+  });
+  cardViews[i][0].titulo = 'Mensagem principal';
+  cardSelecionado[i] = cardViews[i].length - 1;
+  renderTabsCard(i);
+}
+
+
+
+/* ================= INIT ================= */
+(function initAddOrigemBtn(){
+  const btn = document.createElement('button');
+  btn.className = 'add-origem-col';
+  btn.id = 'addOrigemColBtn';
+  btn.innerHTML = '+ Adicionar origem (DE)';
+  btn.onclick = () => addOrigemBlock();
+  document.getElementById('origensContainer').appendChild(btn);
+})();
+montarLogin();
+</script>
+</body>
+</html>
